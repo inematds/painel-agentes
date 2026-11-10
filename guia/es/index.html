@@ -261,7 +261,7 @@
 
   <div class="step"><div class="b">4</div><div>
     <h3>Configura la contraseña</h3>
-    <p>Solo se guarda el resumen (hash) de la contraseña. Con <code>--gerar</code>, el panel crea una contraseña segura y la muestra una sola vez.</p>
+    <p>Solo se guarda el resumen (hash) de la contraseña. La contraseña debe tener al menos 12 caracteres. Con <code>--gerar</code>, el panel crea una contraseña segura y la guarda en el archivo <code>~/.config/painel-agentes/senha-inicial.txt</code> (la terminal muestra la ruta): léela, guárdala en un lugar seguro y borra ese archivo.</p>
 <pre><span class="k">npm run senha</span>              <span class="c"># escribes la contraseña</span>
 <span class="k">npm run senha</span> -- --gerar    <span class="c"># o genera una por ti</span></pre>
   </div></div>
@@ -283,7 +283,7 @@ WantedBy=default.target</pre>
 <span class="k">systemctl --user status</span> painel-agentes   <span class="c"># ¿está funcionando?</span>
 <span class="k">journalctl --user -u</span> painel-agentes -n 30   <span class="c"># si no arrancó, el error aparece aquí</span>
 <span class="k">loginctl enable-linger</span>   <span class="c"># en una VPS: sigue funcionando cuando sales</span></pre>
-    <p>Ajusta las dos líneas del servicio a tu caso: <code>WorkingDirectory</code> es la carpeta donde clonaste el proyecto (ej.: <code>%h/projetos/painel-agentes</code>) y <code>ExecStart</code> usa la ruta que muestre el comando <code>which node</code> (con nvm es distinta de <code>/usr/bin/node</code>).</p>
+    <p>Ajusta las dos líneas del servicio a tu caso: <code>WorkingDirectory</code> es la carpeta donde clonaste el proyecto (ej.: <code>%h/projetos/painel-agentes</code>; <code>%h</code> significa tu carpeta personal) y <code>ExecStart</code> usa la ruta que muestre el comando <code>which node</code> (con nvm es distinta de <code>/usr/bin/node</code>).</p>
   </div></div>
 
   <div class="step"><div class="b">6</div><div>

@@ -261,7 +261,7 @@
 
   <div class="step"><div class="b">4</div><div>
     <h3>Set a password</h3>
-    <p>Only a password summary (hash) is saved. With <code>--gerar</code>, the dashboard creates a strong password and shows it once.</p>
+    <p>Only a password summary (hash) is saved. The password must be at least 12 characters long. With <code>--gerar</code>, the dashboard creates a strong password and saves it to the file <code>~/.config/painel-agentes/senha-inicial.txt</code> (the terminal shows the path): read it, keep it somewhere safe and delete that file.</p>
 <pre><span class="k">npm run senha</span>              <span class="c"># you type the password</span>
 <span class="k">npm run senha</span> -- --gerar    <span class="c"># or it generates one for you</span></pre>
   </div></div>
@@ -283,7 +283,7 @@ WantedBy=default.target</pre>
 <span class="k">systemctl --user status</span> painel-agentes   <span class="c"># is it running?</span>
 <span class="k">journalctl --user -u</span> painel-agentes -n 30   <span class="c"># if it did not start, the error appears here</span>
 <span class="k">loginctl enable-linger</span>   <span class="c"># on a VPS: it keeps running after you log out</span></pre>
-    <p>Adjust the two service lines for your setup: <code>WorkingDirectory</code> is the folder where you cloned the project (e.g. <code>%h/projetos/painel-agentes</code>) and <code>ExecStart</code> uses the path shown by <code>which node</code> (with nvm, it differs from <code>/usr/bin/node</code>).</p>
+    <p>Adjust the two service lines for your setup: <code>WorkingDirectory</code> is the folder where you cloned the project (e.g. <code>%h/projetos/painel-agentes</code>; <code>%h</code> means your home folder) and <code>ExecStart</code> uses the path shown by <code>which node</code> (with nvm, it differs from <code>/usr/bin/node</code>).</p>
   </div></div>
 
   <div class="step"><div class="b">6</div><div>

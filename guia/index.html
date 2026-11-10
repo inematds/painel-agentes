@@ -262,7 +262,7 @@
 
   <div class="step"><div class="b">4</div><div>
     <h3>Defina a senha</h3>
-    <p>Só o resumo (hash) da senha fica gravado. Com <code>--gerar</code>, o painel cria uma senha forte e mostra uma vez.</p>
+    <p>Só o resumo (hash) da senha fica gravado. A senha precisa ter pelo menos 12 caracteres. Com <code>--gerar</code>, o painel cria uma senha forte e a grava no arquivo <code>~/.config/painel-agentes/senha-inicial.txt</code> (o terminal mostra o caminho): leia, guarde e apague esse arquivo.</p>
 <pre><span class="k">npm run senha</span>              <span class="c"># você digita a senha</span>
 <span class="k">npm run senha</span> -- --gerar    <span class="c"># ou ele gera uma para você</span></pre>
   </div></div>
@@ -284,7 +284,7 @@ WantedBy=default.target</pre>
 <span class="k">systemctl --user status</span> painel-agentes   <span class="c"># está rodando?</span>
 <span class="k">journalctl --user -u</span> painel-agentes -n 30   <span class="c"># se não subiu, o erro aparece aqui</span>
 <span class="k">loginctl enable-linger</span>   <span class="c"># numa VPS: continua rodando depois que você sai</span></pre>
-    <p>Ajuste as duas linhas do serviço ao seu caso: <code>WorkingDirectory</code> é a pasta onde você clonou (ex.: <code>%h/projetos/painel-agentes</code>) e <code>ExecStart</code> usa o caminho que o comando <code>which node</code> mostrar (com nvm ele é diferente de <code>/usr/bin/node</code>).</p>
+    <p>Ajuste as duas linhas do serviço ao seu caso: <code>WorkingDirectory</code> é a pasta onde você clonou (ex.: <code>%h/projetos/painel-agentes</code>; <code>%h</code> quer dizer a sua pasta pessoal) e <code>ExecStart</code> usa o caminho que o comando <code>which node</code> mostrar (com nvm ele é diferente de <code>/usr/bin/node</code>).</p>
   </div></div>
 
   <div class="step"><div class="b">6</div><div>
