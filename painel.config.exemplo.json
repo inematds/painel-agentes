@@ -1,0 +1,62 @@
+{
+  "titulo": "de agentes",
+  "nome_falado": "você",
+  "porta": 3143,
+  "bind": "127.0.0.1",
+  "pasta_dados": "~/.config/painel-agentes",
+
+  "maquina": { "memoria_min_gb": 1, "disco_max_pct": 90, "gpu": true },
+
+  "servicos": ["robo-diario.service", "bot-tarefas.service"],
+
+  "bots": [
+    { "nome": "bot-tarefas", "banco": "~/projetos/bot-tarefas/dados.db", "tabela": "jobs" }
+  ],
+
+  "producao": {
+    "rodadas": "~/.local/share/painel-agentes/rodadas.jsonl",
+    "esperas": "~/.local/share/painel-agentes/esperas.json",
+    "timers": true,
+    "timers_ignorar": "^(snap|apt|fwupd)"
+  },
+
+  "publicacao": {
+    "historico": "~/.local/share/painel-agentes/envios.jsonl",
+    "filas": [
+      { "chave": "fila-videos", "nome": "Fila de vídeos", "arquivo": "~/filas/videos.json", "formato": "json", "quem": "timer fila-videos: 9, 13 e 18 h" },
+      { "chave": "fila-posts", "nome": "Posts agendados", "arquivo": "~/filas/posts.txt", "formato": "txt", "quem": "à mão" },
+      { "chave": "esperas", "nome": "Esperas longas", "arquivo": "~/.local/share/painel-agentes/esperas.json", "formato": "esperas", "quem": "vigia de esperas, a cada 5 min" }
+    ]
+  },
+
+  "creditos": {
+    "limites_claude": "/tmp/limites-claude.json",
+    "sessoes_codex": "~/.codex/sessions",
+    "avisos": "~/.config/painel-agentes/avisos.json"
+  },
+
+  "sites": ["https://exemplo.com", "https://blog.exemplo.com"],
+
+  "vagas": {
+    "arquivo": "~/.config/painel-agentes/vagas.json",
+    "status_comando": null,
+    "mudar_comando": null,
+    "internas": {}
+  },
+
+  "terminais": {
+    "sessoes_claude": "~/.claude/sessions",
+    "projetos_claude": "~/.claude/projects",
+    "retratos": null,
+    "comando": null,
+    "unidades": { "robo-diario.service": "robô diário", "bot-tarefas.service": "bot de tarefas" }
+  },
+
+  "assumir": { "tmux_servidor": "painel" },
+
+  "novo_terminal": { "raiz": "~/projetos", "lancador": "claude" },
+
+  "chat": { "bot": { "nome": "Meu bot", "url": null } },
+
+  "pendencias": "~/notas/pendencias.md"
+}
