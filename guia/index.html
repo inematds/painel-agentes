@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>painel-agentes — seus agentes organizados numa tela só</title>
+<meta name="description" content="Painel para ver e organizar seus agentes de IA num lugar só: sessões do Claude Code, robôs, filas de publicação, créditos, sites e vagas da máquina. Você arruma os quadros do seu jeito e conversa com eles.">
+<meta property="og:title" content="painel-agentes — seus agentes organizados numa tela só">
+<meta property="og:description" content="Sessões do Claude Code, robôs, filas, créditos e sites numa tela só, com versão Jarvis e modo demonstração.">
+<meta property="og:image" content="https://inematds.github.io/painel-agentes/guia/assets/banner.jpg">
+<link rel="alternate" hreflang="pt-BR" href="https://inematds.github.io/painel-agentes/guia/">
+<link rel="alternate" hreflang="en" href="https://inematds.github.io/painel-agentes/guia/en/">
+<link rel="alternate" hreflang="es" href="https://inematds.github.io/painel-agentes/guia/es/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0c0c10; --bg2:#14141b; --card:#16161e; --line:#272730;
+    --txt:#e9e9ee; --mut:#9a9aa6; --amb:#FACC15; --amb2:#f0c070; --sky:#38bdf8; --pro:#cbd5e1;
+    --bad:#f0918a; --warnbg:rgba(240,145,138,.08);
+    color-scheme:dark;
+  }
+  body.light{
+    --bg:#f6f7f9; --bg2:#eceef2; --card:#ffffff; --line:#e1e3ea;
+    --txt:#1a1a22; --mut:#5b5b68; --amb:#a16207; --amb2:#a16207; --sky:#0369a1; --pro:#b45309;
+    --bad:#a83426; --warnbg:rgba(168,52,38,.06);
+    color-scheme:light;
+  }
+  body.light nav{background:rgba(246,247,249,.85)}
+  body.light .hero .glow{opacity:.5}
+  body.light pre{background:#0e0e14;color:#d6d6e0}
+  body.light pre .c{color:#8a8a98}
+  body.light pre .k{color:#f0c070}
+  body.light .btn{background:#FACC15}
+  body.light .step .b{background:#FACC15}
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--txt);font:16px/1.65 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  h1,h2,h3{font-family:Sora,sans-serif;line-height:1.15;margin:0}
+  a{color:var(--amb);text-decoration:none}
+  code,pre{font-family:"JetBrains Mono",monospace}
+  p code,li code,td code{background:var(--bg2);border:1px solid var(--line);border-radius:6px;padding:.05em .35em;font-size:.88em;overflow-wrap:anywhere}
+  .wrap{max-width:1160px;margin:0 auto;padding:0 22px}
+  .mut{color:var(--mut)} .amb{color:var(--amb)}
+  .chip{display:inline-block;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--amb);font-weight:600;font-family:Sora}
+  nav{position:sticky;top:0;z-index:30;backdrop-filter:blur(12px);background:rgba(12,12,16,.78);border-bottom:1px solid var(--line)}
+  nav .wrap{display:flex;align-items:center;gap:22px;height:60px}
+  nav .brand{display:flex;align-items:center;gap:8px;font-family:Sora;font-weight:800;letter-spacing:-.02em;color:var(--amb);white-space:nowrap}
+  nav .brand .emoji{font-size:1.25rem}
+  nav .sep{color:var(--mut);opacity:.45}
+  nav .inema{color:var(--sky);font-weight:600;font-size:.88rem;font-family:Sora}
+  nav .inema:hover{filter:brightness(1.15)}
+  nav .pro{color:var(--pro);font-weight:600;font-size:.88rem;font-family:Sora}
+  nav .pro:hover{filter:brightness(1.15)}
+  nav .clubpro{display:inline-flex;align-items:center;gap:6px}
+  nav .links{margin-left:auto;display:flex;align-items:center;gap:20px;font-size:.92rem}
+  nav .links a.sec{color:var(--mut);white-space:nowrap} nav .links a.sec:hover{color:var(--txt)}
+  .lang{display:inline-flex;gap:2px;font-family:Sora;font-size:.78rem}
+  .lang a{color:var(--mut);padding:.2em .45em;border-radius:6px} .lang a.on{color:var(--amb);background:rgba(250,204,21,.12)}
+  .tgl{background:var(--bg2);border:1px solid var(--line);color:var(--txt);width:38px;height:38px;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:1.05rem}
+  .tgl:hover{border-color:var(--amb)}
+  .btn{display:inline-block;background:var(--amb);color:#1a1206;font-weight:600;padding:.6em 1.05em;border-radius:10px;font-family:Sora}
+  .btn.ghost{background:transparent;color:var(--txt);border:1px solid var(--line)}
+  @media(max-width:1020px){nav .links a.sec{display:none}}
+  @media(max-width:520px){nav .wrap{gap:8px;padding:8px 14px;height:auto;flex-wrap:wrap} nav .links{gap:8px;margin-left:0;width:100%;justify-content:space-between} nav .btn{padding:.45em .7em;font-size:.82rem} .tgl{width:34px;height:34px}}
+  .hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+  .hero .glow{position:absolute;inset:-40% -20% auto auto;width:70%;height:600px;background:radial-gradient(closest-side,rgba(250,204,21,.18),transparent 70%);pointer-events:none}
+  .hero .wrap{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;padding:70px 22px}
+  .hero h1{font-size:clamp(2.1rem,4.6vw,3.3rem);font-weight:800;letter-spacing:-.025em}
+  .hero p.lead{font-size:1.15rem;color:var(--mut);margin:1.1em 0 1.6em;max-width:40ch}
+  .hero .cta{display:flex;gap:12px;flex-wrap:wrap}
+  .hero figure{margin:0;border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:0 30px 80px -30px #000}
+  .hero figure img{width:100%;height:auto;display:block}
+  .resumo{padding:38px 0 34px;border-bottom:1px solid var(--line)}
+  .resumo p{font-size:1.12rem;line-height:1.7;max-width:74ch;margin:.55em 0 0}
+  @media(max-width:780px){.hero .wrap{grid-template-columns:1fr;padding:44px 22px}}
+  section{padding:62px 0;border-bottom:1px solid var(--line)}
+  section h2{font-size:clamp(1.5rem,3.4vw,2.1rem);font-weight:800;letter-spacing:-.02em}
+  section .sub{color:var(--mut);margin:.6em 0 2em;max-width:66ch}
+  .grid{display:grid;gap:16px}
+  .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)} .g2{grid-template-columns:repeat(2,1fr)}
+  @media(max-width:820px){.g3,.g4{grid-template-columns:1fr 1fr}}
+  @media(max-width:540px){.g2,.g3,.g4{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;min-width:0}
+  .card h3{font-size:1.05rem;margin-bottom:.4em}
+  .card p{color:var(--mut);font-size:.95rem;margin:0}
+  .card ul{color:var(--mut);font-size:.95rem;margin:.4em 0 0;padding-left:1.1em}
+  .flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+  .flow span{background:var(--bg2);border:1px solid var(--line);border-radius:999px;padding:.45em .9em;font-size:.88rem;font-family:Sora;font-weight:600}
+  .flow .arr{color:var(--amb);border:none;background:none;padding:0 .1em}
+  pre{background:#0a0a0e;border:1px solid var(--line);border-radius:12px;padding:16px 18px;overflow:auto;font-size:.86rem;line-height:1.6;color:#d6d6e0;margin:0}
+  pre .c{color:#8a8a98} pre .k{color:var(--amb2)} pre .s{color:#9ece6a}
+  .step{display:grid;grid-template-columns:46px minmax(0,1fr);gap:16px;margin-bottom:28px}
+  .step>div{min-width:0}
+  .step .b{width:46px;height:46px;border-radius:12px;background:var(--amb);color:#1a1206;font-family:Sora;font-weight:800;font-size:1.25rem;display:flex;align-items:center;justify-content:center}
+  .step h3{font-size:1.12rem;margin-bottom:.3em}
+  .step p{color:var(--mut);margin:.2em 0 .7em}
+  .shots{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:680px){.shots{grid-template-columns:1fr}}
+  .shots figure{margin:0;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:var(--card);display:flex;flex-direction:column}
+  .shots figure a{display:block}
+  .shots figure img{width:100%;height:auto;display:block}
+  .shots figcaption{padding:12px 14px;font-size:.92rem;color:var(--mut)}
+  .shots figcaption b{color:var(--txt);font-family:Sora;display:block;margin-bottom:.15em}
+  .shots .wide{grid-column:1/-1}
+  .phone{display:grid;grid-template-columns:260px 1fr;gap:24px;align-items:center;margin-top:18px}
+  @media(max-width:680px){.phone{grid-template-columns:1fr}.phone figure{max-width:260px}}
+  .phone figure{margin:0;border-radius:18px;overflow:hidden;border:1px solid var(--line)}
+  .phone img{width:100%;display:block}
+  .estados{display:flex;flex-wrap:wrap;gap:8px;margin:.6em 0 0}
+  .estados span{border:1px solid var(--line);border-radius:999px;padding:.25em .75em;font-size:.85rem;background:var(--bg2)}
+  .warn{border:1px solid var(--bad);background:var(--warnbg);border-radius:14px;padding:18px 20px;margin-top:18px}
+  .warn h3{font-size:1.05rem;color:var(--bad);margin-bottom:.35em}
+  .warn p{margin:.2em 0;color:var(--txt)}
+  table{width:100%;border-collapse:collapse;font-size:.95rem}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-family:Sora;font-size:.85rem;color:var(--mut);font-weight:600}
+  .tbl{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--card)}
+  footer{padding:46px 0;text-align:center;color:var(--mut);font-size:.9rem}
+  .pill{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:.3em .8em;font-size:.78rem;color:var(--mut);margin:4px}
+</style>
+</head>
+<body>
+
+<nav><div class="wrap">
+  <a class="brand" href="#top"><span class="emoji">🗂️</span> painel-agentes</a>
+  <span class="sep">|</span>
+  <span class="clubpro">
+    <a class="inema" href="https://inema.club" target="_blank" rel="noopener">INEMA.CLUB</a>
+    <span class="sep">-</span>
+    <a class="pro" href="https://inema.pro" target="_blank" rel="noopener">PRO</a>
+  </span>
+  <div class="links">
+    <a class="sec" href="#oque">O que é</a>
+    <a class="sec" href="#telas">Telas</a>
+    <a class="sec" href="#guia">Guia de uso</a>
+    <a class="sec" href="#seguranca">Segurança</a>
+    <span class="lang"><a class="on" href="./">PT</a><a href="en/">EN</a><a href="es/">ES</a></span>
+    <button class="tgl" id="themeToggle" aria-label="Alternar tema" title="Alternar tema">🌙</button>
+    <a class="btn" href="https://github.com/inematds/painel-agentes" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</div></nav>
+
+<header class="hero" id="top">
+  <div class="glow"></div>
+  <div class="wrap">
+    <div>
+      <span class="chip">Painel de agentes · código aberto</span>
+      <h1>Seus agentes <span class="amb">organizados</span> numa tela só</h1>
+      <p class="lead">Terminais do Claude Code, robôs, filas e créditos num painel que você arruma do seu jeito — e de onde conversa com eles.</p>
+      <div class="cta">
+        <a class="btn" href="#guia">Começar o guia</a>
+        <a class="btn ghost" href="https://github.com/inematds/painel-agentes" target="_blank" rel="noopener">Ver no GitHub</a>
+      </div>
+    </div>
+    <figure><img src="assets/banner.jpg" alt="Banner: Painel de agentes — veja e organize seus agentes numa tela só"></figure>
+  </div>
+</header>
+
+<section id="resumo" class="resumo"><div class="wrap">
+  <span class="chip">Em resumo</span>
+  <p>O painel-agentes é uma página que roda no seu computador e mostra, numa tela só, tudo o que seus agentes de IA estão fazendo: as sessões do Claude Code abertas (e se foi você ou um robô que abriu), os bots, as filas de publicação, os limites da assinatura e se seus sites estão no ar. Serve para quem deixa vários agentes trabalhando e perde a conta de onde está cada um. Você troca os quadros de lugar como preferir e, se quiser, conversa com um bot ou terminal ali mesmo. Precisa de Node 20+ e Linux; para só conhecer, o modo demonstração não lê nada seu.</p>
+</div></section>
+
+<section id="oque"><div class="wrap">
+  <span class="chip">O que é</span>
+  <h2>Uma tela para os agentes que trabalham por você</h2>
+  <p class="sub">Quem usa agentes acaba com cinco terminais abertos, dois robôs rodando de madrugada e uma fila que ninguém olhou. O painel junta tudo e diz o que está esperando por você.</p>
+  <figure style="margin:0 0 26px;border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:0 30px 80px -30px #000"><img src="assets/banner-grade.jpg" alt="Banner: terminais, robôs, filas, créditos, organizar e conversar" loading="lazy" style="width:100%;display:block"></figure>
+  <div class="grid g3">
+    <div class="card"><h3>👀 Vê tudo de relance</h3><p>Nove quadros: o que espera você, máquina, bots, produção, publicação, créditos, sites, vagas e terminais. Cada um diz em uma frase se está tudo bem.</p></div>
+    <div class="card"><h3>🧩 Organiza do seu jeito</h3><p>O botão <b>Organizar</b> troca os quadros de lugar (tocando ou arrastando). Três jeitos de ver — Lista, Ícones e Imagens — e uma versão Jarvis com voz.</p></div>
+    <div class="card"><h3>💬 Conversa com eles</h3><p>Abra uma sessão e leia a conversa, veja a tela ao vivo e, se você ligar, digite nela. A gaveta <b>Conversar</b> fala com um bot seu ou com um terminal.</p></div>
+  </div>
+</div></section>
+
+<section id="telas"><div class="wrap">
+  <span class="chip">As telas</span>
+  <h2>Como fica na prática</h2>
+  <p class="sub">Todas as imagens abaixo são do <b>modo demonstração</b>: dados inventados, nada de ninguém. É exatamente o que você vê ao rodar <code>npm run demo</code>.</p>
+  <div class="shots">
+    <figure class="wide"><a href="assets/print-lista.jpg" target="_blank" rel="noopener"><img src="assets/print-lista.jpg" alt="Painel clássico no modo Lista com os nove quadros" loading="lazy"></a><figcaption><b>Painel clássico — Lista</b>No topo, a faixa de alertas (erros em vermelho, avisos com !). Embaixo, os quadros. Em <i>Terminais</i>, 👤 é sessão aberta por você e 🤖 é sessão aberta por um robô.</figcaption></figure>
+    <figure><a href="assets/print-imagens.jpg" target="_blank" rel="noopener"><img src="assets/print-imagens.jpg" alt="Painel no modo Imagens" loading="lazy"></a><figcaption><b>Modo Imagens</b>Produção, publicação e terminais viram cartões com imagem. Bom para uma TV no canto da sala.</figcaption></figure>
+    <figure><a href="assets/print-publicacao.jpg" target="_blank" rel="noopener"><img src="assets/print-publicacao.jpg" alt="Detalhe de Publicação com as filas item por item" loading="lazy"></a><figcaption><b>Publicação: as filas item por item</b>Cada item tem um estado só, seja qual for o formato da sua fila.</figcaption></figure>
+    <figure><a href="assets/print-sessao-dados.jpg" target="_blank" rel="noopener"><img src="assets/print-sessao-dados.jpg" alt="Sessão do Claude Code aberta na aba Dados" loading="lazy"></a><figcaption><b>Sessão — aba Dados</b>Quem abriu, como entrou, modelo, quanto do contexto já usou, custo equivalente e o último pedido.</figcaption></figure>
+    <figure><a href="assets/print-sessao-conteudo.jpg" target="_blank" rel="noopener"><img src="assets/print-sessao-conteudo.jpg" alt="Sessão na aba Conteúdo mostrando a conversa" loading="lazy"></a><figcaption><b>Sessão — aba Conteúdo</b>A conversa, só leitura, atualizando a cada 5 s. Chaves e senhas que aparecerem saem mascaradas.</figcaption></figure>
+    <figure><a href="assets/print-sessao-terminal.jpg" target="_blank" rel="noopener"><img src="assets/print-sessao-terminal.jpg" alt="Sessão na aba Terminal com a tela ao vivo" loading="lazy"></a><figcaption><b>Sessão — aba Terminal</b>A tela ao vivo. Digitar nela (Assumir) só com <code>PAINEL_ASSUMIR=1</code> e em sessões abertas no tmux do painel.</figcaption></figure>
+    <figure><a href="assets/print-organizar.jpg" target="_blank" rel="noopener"><img src="assets/print-organizar.jpg" alt="Modo Organizar ligado com os quadros tracejados" loading="lazy"></a><figcaption><b>Organizar</b>Os quadros ficam tracejados: toque num e depois no lugar para onde ele vai, ou arraste. Clique <b>Pronto</b>. Fica guardado neste aparelho.</figcaption></figure>
+    <figure><a href="assets/print-conversar.jpg" target="_blank" rel="noopener"><img src="assets/print-conversar.jpg" alt="Gaveta Conversar aberta ao lado do painel" loading="lazy"></a><figcaption><b>Gaveta Conversar</b>Escolha um bot ou um terminal e escreva. Tem os botões Esc, Ctrl+C, setas e Enter, e o <b>+ Novo terminal</b>.</figcaption></figure>
+    <figure class="wide"><a href="assets/print-jarvis.jpg" target="_blank" rel="noopener"><img src="assets/print-jarvis.jpg" alt="Versão Jarvis do painel, em estilo HUD" loading="lazy"></a><figcaption><b>Versão Jarvis (<code>/jarvis</code>)</b>Os mesmos dados num visual de HUD (painel no estilo de filme de ficção científica): núcleo animado, uma frase por sistema, "Bom dia" falado e atalhos de teclado (1 Bom dia · 2 Status · 3 O que espera · 4 Modo foco · 5 Trocar visão).</figcaption></figure>
+  </div>
+  <div class="phone">
+    <figure><img src="assets/print-celular.jpg" alt="Painel na largura de um celular" loading="lazy"></figure>
+    <div>
+      <h3 style="font-size:1.15rem;margin-bottom:.4em">No celular também</h3>
+      <p class="mut">Os quadros se empilham e os botões quebram de linha. Para ver de fora de casa, use rede local ou VPN (uma rede privada entre seus aparelhos), com senha (veja <a href="#seguranca">Segurança</a>).</p>
+      <p class="mut" style="margin-top:1em">Os estados das filas, iguais em qualquer formato:</p>
+      <div class="estados"><span>! na fila</span><span>✓ publicando</span><span>✓ feito</span><span>× erro</span><span>retirado</span></div>
+    </div>
+  </div>
+</div></section>
+
+<section id="fluxo"><div class="wrap">
+  <span class="chip">Como funciona</span>
+  <h2>Ele só lê o que já está na máquina</h2>
+  <p class="sub">O painel não chama modelo de IA nem API. Ele lê arquivos que seus agentes e o Claude Code já gravam e mostra tudo junto. O que você não configurar aparece como "não configurado" — nunca erro.</p>
+  <div class="flow">
+    <span>Seus agentes trabalham</span><span class="arr">→</span>
+    <span>gravam sessões, filas e rodadas</span><span class="arr">→</span>
+    <span>o painel lê a cada 15 s</span><span class="arr">→</span>
+    <span>regras marcam o que pede atenção</span><span class="arr">→</span>
+    <span>você olha, arruma e age</span>
+  </div>
+  <div class="grid g3" style="margin-top:26px">
+    <div class="card"><h3>De onde vêm os dados</h3><ul><li>Sessões: <code>~/.claude/sessions</code> e <code>~/.claude/projects</code></li><li>Máquina: <code>/proc</code>, disco, <code>journalctl</code></li><li>Bots: <code>systemctl --user</code> e bancos SQLite (banco de dados num arquivo), só leitura</li></ul></div>
+    <div class="card"><h3>O que você aponta na config</h3><ul><li>Arquivos de filas (JSON ou TXT)</li><li>Histórico de envios e rodadas (JSONL: arquivo de registro com um evento por linha)</li><li>Sites a checar, vagas, avisos com prazo</li></ul></div>
+    <div class="card"><h3>Duas caras, mesmos dados</h3><ul><li><code>/painel</code>: clássico, com Lista, Ícones e Imagens</li><li><code>/jarvis</code>: HUD com voz e atalhos</li><li>Voz ligada fala só os alertas novos</li></ul></div>
+  </div>
+</div></section>
+
+<section id="pre"><div class="wrap">
+  <span class="chip">Pré-requisitos</span>
+  <h2>O que você precisa</h2>
+  <p class="sub">Um computador ou VPS com Linux (os dados da máquina vêm do <code>/proc</code>) e o Node instalado.</p>
+  <div class="grid g3">
+    <div class="card"><h3>Node 20 ou mais novo</h3><p style="margin-bottom:.8em">Testado no Node 22.</p><pre><span class="k">node</span> -v   <span class="c"># v20 ou maior</span></pre></div>
+    <div class="card"><h3>Git</h3><p style="margin-bottom:.8em">Para baixar o projeto.</p><pre><span class="k">git</span> --version</pre></div>
+    <div class="card"><h3>tmux (opcional)</h3><p style="margin-bottom:.8em">Só se for ver a tela ao vivo, Assumir ou abrir Novo terminal.</p><pre><span class="k">tmux</span> -V</pre></div>
+  </div>
+</div></section>
+
+<section id="guia"><div class="wrap">
+  <span class="chip">Guia de uso · passo a passo</span>
+  <h2>Do zero ao painel no ar</h2>
+  <p class="sub">Comece pelo modo demonstração para conhecer a tela. Depois aponte para os seus arquivos.</p>
+
+  <div class="step"><div class="b">1</div><div>
+    <h3>Baixe e instale</h3>
+    <p>Clona o repositório, instala as dependências e compila.</p>
+<pre><span class="k">git clone</span> <span class="s">https://github.com/inematds/painel-agentes</span>
+<span class="k">cd</span> painel-agentes
+<span class="k">npm ci</span> &amp;&amp; <span class="k">npm run build</span></pre>
+    <p>Se aparecer um erro de compilação do <code>better-sqlite3</code>, pode seguir: ele é opcional. Sem ele o painel funciona igual; só o quadro Bots deixa de ler os bancos e mostra apenas os serviços.</p>
+  </div></div>
+
+  <div class="step"><div class="b">2</div><div>
+    <h3>Conheça a tela no modo demonstração</h3>
+    <p>Dados inventados nos nove quadros, sem login, sem ler nada seu. Abra <code>http://127.0.0.1:3143/painel</code> e depois <code>/jarvis</code>.</p>
+<pre><span class="k">npm run demo</span>   <span class="c"># o mesmo que PAINEL_DEMO=1 node dist/index.js</span></pre>
+    <p>Teste os botões: Lista, Ícones, Imagens, <b>Organizar</b> (troque dois quadros de lugar), <b>Conversar</b> e clique numa sessão em <i>Terminais</i>. Pare com <code>Ctrl+C</code>.</p>
+  </div></div>
+
+  <div class="step"><div class="b">3</div><div>
+    <h3>Crie a sua configuração</h3>
+    <p>Copie o exemplo e apague o que você não usa. Toda chave é opcional: sem a chave, o quadro mostra "não configurado".</p>
+<pre><span class="k">cp</span> painel.config.exemplo.json painel.config.json
+<span class="k">nano</span> painel.config.json   <span class="c"># aponte os caminhos das suas filas, bots e sites</span></pre>
+    <p>O exemplo vem com bots, filas e sites de mentira (<code>bot-tarefas</code>, <code>exemplo.com</code>): apague essas entradas ou troque pelos seus, senão os quadros mostram "sem dados" ou alertas falsos. O quadro Créditos só mostra os limites do Claude se a sua statusline (a linha de status do Claude Code) gravar o arquivo indicado em <code>creditos.limites_claude</code>.</p>
+    <p>As sessões do Claude Code aparecem sem configurar nada: o painel já procura em <code>~/.claude</code>. A lista completa de chaves está no <a href="https://github.com/inematds/painel-agentes#configura%C3%A7%C3%A3o-painelconfigjson" target="_blank" rel="noopener">README</a>.</p>
+  </div></div>
+
+  <div class="step"><div class="b">4</div><div>
+    <h3>Defina a senha</h3>
+    <p>Só o resumo (hash) da senha fica gravado. Com <code>--gerar</code>, o painel cria uma senha forte e mostra uma vez.</p>
+<pre><span class="k">npm run senha</span>              <span class="c"># você digita a senha</span>
+<span class="k">npm run senha</span> -- --gerar    <span class="c"># ou ele gera uma para você</span></pre>
+  </div></div>
+
+  <div class="step"><div class="b">5</div><div>
+    <h3>Suba o painel</h3>
+    <p>Abre em <code>http://127.0.0.1:3143/painel</code> — só neste computador.</p>
+<pre><span class="k">npm start</span></pre>
+    <p>Para deixar rodando sempre, crie um serviço do systemd do usuário:</p>
+<pre><span class="c"># ~/.config/systemd/user/painel-agentes.service</span>
+[Service]
+WorkingDirectory=%h/painel-agentes
+ExecStart=/usr/bin/node dist/index.js
+Restart=on-failure
+[Install]
+WantedBy=default.target</pre>
+<pre><span class="k">systemctl --user daemon-reload</span>
+<span class="k">systemctl --user enable --now</span> painel-agentes
+<span class="k">systemctl --user status</span> painel-agentes   <span class="c"># está rodando?</span>
+<span class="k">journalctl --user -u</span> painel-agentes -n 30   <span class="c"># se não subiu, o erro aparece aqui</span>
+<span class="k">loginctl enable-linger</span>   <span class="c"># numa VPS: continua rodando depois que você sai</span></pre>
+    <p>Ajuste as duas linhas do serviço ao seu caso: <code>WorkingDirectory</code> é a pasta onde você clonou (ex.: <code>%h/projetos/painel-agentes</code>) e <code>ExecStart</code> usa o caminho que o comando <code>which node</code> mostrar (com nvm ele é diferente de <code>/usr/bin/node</code>).</p>
+  </div></div>
+
+  <div class="step"><div class="b">6</div><div>
+    <h3>Arrume do seu jeito</h3>
+    <p>Clique em <b>Organizar</b>, toque num quadro e depois no lugar para onde ele vai (ou arraste) e clique <b>Pronto</b>. A arrumação fica guardada no navegador daquele aparelho; <b>Restaurar padrão</b> volta ao original. Clique em qualquer quadro para ver o detalhe completo.</p>
+  </div></div>
+
+  <div class="step"><div class="b">7</div><div>
+    <h3>(Opcional) Assumir e Conversar</h3>
+    <p>Desligados por padrão. Ligue só em rede de confiança — leia <a href="#seguranca">Segurança</a> antes.</p>
+    <p>São duas chaves diferentes. <code>PAINEL_ASSUMIR=1</code> liga digitar nos terminais (aba <b>Terminal</b>, terminal na gaveta <b>Conversar</b> e <b>+ Novo terminal</b>). <code>PAINEL_CHAT=1</code> liga só a conversa com o seu bot, e só se <code>chat.bot.url</code> estiver preenchido na config. Para ter as duas, ligue as duas na mesma linha:</p>
+<pre><span class="k">PAINEL_ASSUMIR=1 PAINEL_CHAT=1 npm start</span></pre>
+    <p>O painel só enxerga e digita em sessões abertas no <b>tmux do painel</b>: um tmux separado, com o nome <code>painel</code>. Uma sessão do Claude aberta fora dele aparece na lista, mas não aceita o Assumir. Para abrir um agente lá dentro:</p>
+<pre><span class="k">tmux</span> -L painel new -s meu-projeto claude</pre>
+    <p>O <b>+ Novo terminal</b> faz isso por você, sempre dentro da pasta configurada em <code>novo_terminal.raiz</code>.</p>
+  </div></div>
+</div></section>
+
+<section id="seguranca"><div class="wrap">
+  <span class="chip">Segurança</span>
+  <h2>Fechado por padrão</h2>
+  <p class="sub">O painel mostra muita coisa da sua máquina. Por isso ele começa trancado e você abre só o que precisa.</p>
+  <div class="grid g2">
+    <div class="card"><h3>🔒 Só neste computador</h3><p>Sobe em <code>127.0.0.1</code>. Para abrir na rede (<code>"bind": "0.0.0.0"</code>), a senha é obrigatória: sem senha, ele recusa e fica no próprio computador.</p></div>
+    <div class="card"><h3>🔑 Login por senha</h3><p>O login fica guardado no navegador de forma protegida, aparelho lembrado por 365 dias, 5 erros seguidos bloqueiam por 15 min e há o botão "Sair de todos os aparelhos".</p></div>
+    <div class="card"><h3>👁️ Só leitura</h3><p>Não chama modelo nem API; abre os bancos só para ler; chaves, tokens e senhas que aparecem em conversa e terminal saem mascarados.</p></div>
+    <div class="card"><h3>🧪 Demonstração isolada</h3><p>No modo demo não lê arquivo, não roda comando, não acessa a rede, só responde no próprio computador e recusa qualquer escrita.</p></div>
+  </div>
+  <div class="warn">
+    <h3>⚠️ Risco do Assumir, Novo terminal e Conversar</h3>
+    <p>Esses três <b>digitam no agente</b>. Se o Claude ali roda sem pedir permissão, quem entrar no painel manda na sua máquina. Por isso vêm desligados. Se ligar: use só em rede local ou VPN, nunca exposto direto na internet. Cada envio fica registrado num log (só o início do texto, mascarado); o do Assumir é <code>assumir.log</code>, na pasta de dados do painel.</p>
+  </div>
+</div></section>
+
+<section id="versoes"><div class="wrap">
+  <span class="chip">Versões</span>
+  <h2>Completa ou simples?</h2>
+  <p class="sub">Existe uma versão simples, em Python e num arquivo só, para quem quer só olhar sem instalar Node.</p>
+  <div class="tbl"><table>
+    <tr><th></th><th>painel-agentes (esta)</th><th>jarvis-painel (versão simples)</th></tr>
+    <tr><td>Precisa de</td><td>Node 20+ e Linux</td><td>Python 3 e um navegador</td></tr>
+    <tr><td>O que mostra</td><td>9 quadros: sessões do Claude Code, bots, produção, filas item por item, créditos, sites, vagas, máquina e o que espera você</td><td>timers, filas, logs e suas pendências, em visual de HUD com voz</td></tr>
+    <tr><td>Organizar, Conversar, Assumir</td><td>sim (Conversar e Assumir desligados por padrão)</td><td>não: os botões só marcam na tela</td></tr>
+    <tr><td>Guia</td><td>esta página</td><td><a href="https://inematds.github.io/jarvis-painel/guia/" target="_blank" rel="noopener">jarvis-painel/guia</a></td></tr>
+  </table></div>
+</div></section>
+
+<footer>
+  <div class="wrap">
+    <span class="pill">Node 22</span><span class="pill">TypeScript</span><span class="pill">sem framework</span><span class="pill">MIT</span>
+    <p style="margin-top:18px">painel-agentes · seus agentes numa tela só ·
+      <a href="https://github.com/inematds/painel-agentes">github.com/inematds/painel-agentes</a> ·
+      <a href="https://inema.club">INEMA.CLUB</a></p>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var KEY='painel-agentes-theme';
+    var b=document.body, t=document.getElementById('themeToggle');
+    try{ if(localStorage.getItem(KEY)==='light'){ b.classList.add('light'); t.textContent='☀️'; } }catch(e){}
+    t.addEventListener('click',function(){
+      var light=b.classList.toggle('light');
+      t.textContent=light?'☀️':'🌙';
+      try{ localStorage.setItem(KEY, light?'light':'dark'); }catch(e){}
+    });
+  })();
+</script>
+</body>
+</html>

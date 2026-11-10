@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>painel-agentes — your agents organized on one screen</title>
+<meta name="description" content="Dashboard to view and organize your AI agents in one place: Claude Code sessions, bots, publishing queues, credits, sites, and available machine capacity. Arrange the boards your way and chat with them.">
+<meta property="og:title" content="painel-agentes — your agents organized on one screen">
+<meta property="og:description" content="Claude Code sessions, bots, queues, credits, and sites on one screen, with a Jarvis version and demo mode.">
+<meta property="og:image" content="https://inematds.github.io/painel-agentes/guia/assets/banner-en.jpg">
+<link rel="alternate" hreflang="pt-BR" href="https://inematds.github.io/painel-agentes/guia/">
+<link rel="alternate" hreflang="en" href="https://inematds.github.io/painel-agentes/guia/en/">
+<link rel="alternate" hreflang="es" href="https://inematds.github.io/painel-agentes/guia/es/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0c0c10; --bg2:#14141b; --card:#16161e; --line:#272730;
+    --txt:#e9e9ee; --mut:#9a9aa6; --amb:#FACC15; --amb2:#f0c070; --sky:#38bdf8; --pro:#cbd5e1;
+    --bad:#f0918a; --warnbg:rgba(240,145,138,.08);
+    color-scheme:dark;
+  }
+  body.light{
+    --bg:#f6f7f9; --bg2:#eceef2; --card:#ffffff; --line:#e1e3ea;
+    --txt:#1a1a22; --mut:#5b5b68; --amb:#a16207; --amb2:#a16207; --sky:#0369a1; --pro:#b45309;
+    --bad:#a83426; --warnbg:rgba(168,52,38,.06);
+    color-scheme:light;
+  }
+  body.light nav{background:rgba(246,247,249,.85)}
+  body.light .hero .glow{opacity:.5}
+  body.light pre{background:#0e0e14;color:#d6d6e0}
+  body.light pre .c{color:#8a8a98}
+  body.light pre .k{color:#f0c070}
+  body.light .btn{background:#FACC15}
+  body.light .step .b{background:#FACC15}
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--txt);font:16px/1.65 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  h1,h2,h3{font-family:Sora,sans-serif;line-height:1.15;margin:0}
+  a{color:var(--amb);text-decoration:none}
+  code,pre{font-family:"JetBrains Mono",monospace}
+  p code,li code,td code{background:var(--bg2);border:1px solid var(--line);border-radius:6px;padding:.05em .35em;font-size:.88em;overflow-wrap:anywhere}
+  .wrap{max-width:1160px;margin:0 auto;padding:0 22px}
+  .mut{color:var(--mut)} .amb{color:var(--amb)}
+  .chip{display:inline-block;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--amb);font-weight:600;font-family:Sora}
+  nav{position:sticky;top:0;z-index:30;backdrop-filter:blur(12px);background:rgba(12,12,16,.78);border-bottom:1px solid var(--line)}
+  nav .wrap{display:flex;align-items:center;gap:22px;height:60px}
+  nav .brand{display:flex;align-items:center;gap:8px;font-family:Sora;font-weight:800;letter-spacing:-.02em;color:var(--amb);white-space:nowrap}
+  nav .brand .emoji{font-size:1.25rem}
+  nav .sep{color:var(--mut);opacity:.45}
+  nav .inema{color:var(--sky);font-weight:600;font-size:.88rem;font-family:Sora}
+  nav .inema:hover{filter:brightness(1.15)}
+  nav .pro{color:var(--pro);font-weight:600;font-size:.88rem;font-family:Sora}
+  nav .pro:hover{filter:brightness(1.15)}
+  nav .clubpro{display:inline-flex;align-items:center;gap:6px}
+  nav .links{margin-left:auto;display:flex;align-items:center;gap:20px;font-size:.92rem}
+  nav .links a.sec{color:var(--mut);white-space:nowrap} nav .links a.sec:hover{color:var(--txt)}
+  .lang{display:inline-flex;gap:2px;font-family:Sora;font-size:.78rem}
+  .lang a{color:var(--mut);padding:.2em .45em;border-radius:6px} .lang a.on{color:var(--amb);background:rgba(250,204,21,.12)}
+  .tgl{background:var(--bg2);border:1px solid var(--line);color:var(--txt);width:38px;height:38px;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:1.05rem}
+  .tgl:hover{border-color:var(--amb)}
+  .btn{display:inline-block;background:var(--amb);color:#1a1206;font-weight:600;padding:.6em 1.05em;border-radius:10px;font-family:Sora}
+  .btn.ghost{background:transparent;color:var(--txt);border:1px solid var(--line)}
+  @media(max-width:1020px){nav .links a.sec{display:none}}
+  @media(max-width:520px){nav .wrap{gap:8px;padding:8px 14px;height:auto;flex-wrap:wrap} nav .links{gap:8px;margin-left:0;width:100%;justify-content:space-between} nav .btn{padding:.45em .7em;font-size:.82rem} .tgl{width:34px;height:34px}}
+  .hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+  .hero .glow{position:absolute;inset:-40% -20% auto auto;width:70%;height:600px;background:radial-gradient(closest-side,rgba(250,204,21,.18),transparent 70%);pointer-events:none}
+  .hero .wrap{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;padding:70px 22px}
+  .hero h1{font-size:clamp(2.1rem,4.6vw,3.3rem);font-weight:800;letter-spacing:-.025em}
+  .hero p.lead{font-size:1.15rem;color:var(--mut);margin:1.1em 0 1.6em;max-width:40ch}
+  .hero .cta{display:flex;gap:12px;flex-wrap:wrap}
+  .hero figure{margin:0;border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:0 30px 80px -30px #000}
+  .hero figure img{width:100%;height:auto;display:block}
+  .resumo{padding:38px 0 34px;border-bottom:1px solid var(--line)}
+  .resumo p{font-size:1.12rem;line-height:1.7;max-width:74ch;margin:.55em 0 0}
+  @media(max-width:780px){.hero .wrap{grid-template-columns:1fr;padding:44px 22px}}
+  section{padding:62px 0;border-bottom:1px solid var(--line)}
+  section h2{font-size:clamp(1.5rem,3.4vw,2.1rem);font-weight:800;letter-spacing:-.02em}
+  section .sub{color:var(--mut);margin:.6em 0 2em;max-width:66ch}
+  .grid{display:grid;gap:16px}
+  .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)} .g2{grid-template-columns:repeat(2,1fr)}
+  @media(max-width:820px){.g3,.g4{grid-template-columns:1fr 1fr}}
+  @media(max-width:540px){.g2,.g3,.g4{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;min-width:0}
+  .card h3{font-size:1.05rem;margin-bottom:.4em}
+  .card p{color:var(--mut);font-size:.95rem;margin:0}
+  .card ul{color:var(--mut);font-size:.95rem;margin:.4em 0 0;padding-left:1.1em}
+  .flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+  .flow span{background:var(--bg2);border:1px solid var(--line);border-radius:999px;padding:.45em .9em;font-size:.88rem;font-family:Sora;font-weight:600}
+  .flow .arr{color:var(--amb);border:none;background:none;padding:0 .1em}
+  pre{background:#0a0a0e;border:1px solid var(--line);border-radius:12px;padding:16px 18px;overflow:auto;font-size:.86rem;line-height:1.6;color:#d6d6e0;margin:0}
+  pre .c{color:#8a8a98} pre .k{color:var(--amb2)} pre .s{color:#9ece6a}
+  .step{display:grid;grid-template-columns:46px minmax(0,1fr);gap:16px;margin-bottom:28px}
+  .step>div{min-width:0}
+  .step .b{width:46px;height:46px;border-radius:12px;background:var(--amb);color:#1a1206;font-family:Sora;font-weight:800;font-size:1.25rem;display:flex;align-items:center;justify-content:center}
+  .step h3{font-size:1.12rem;margin-bottom:.3em}
+  .step p{color:var(--mut);margin:.2em 0 .7em}
+  .shots{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:680px){.shots{grid-template-columns:1fr}}
+  .shots figure{margin:0;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:var(--card);display:flex;flex-direction:column}
+  .shots figure a{display:block}
+  .shots figure img{width:100%;height:auto;display:block}
+  .shots figcaption{padding:12px 14px;font-size:.92rem;color:var(--mut)}
+  .shots figcaption b{color:var(--txt);font-family:Sora;display:block;margin-bottom:.15em}
+  .shots .wide{grid-column:1/-1}
+  .phone{display:grid;grid-template-columns:260px 1fr;gap:24px;align-items:center;margin-top:18px}
+  @media(max-width:680px){.phone{grid-template-columns:1fr}.phone figure{max-width:260px}}
+  .phone figure{margin:0;border-radius:18px;overflow:hidden;border:1px solid var(--line)}
+  .phone img{width:100%;display:block}
+  .estados{display:flex;flex-wrap:wrap;gap:8px;margin:.6em 0 0}
+  .estados span{border:1px solid var(--line);border-radius:999px;padding:.25em .75em;font-size:.85rem;background:var(--bg2)}
+  .warn{border:1px solid var(--bad);background:var(--warnbg);border-radius:14px;padding:18px 20px;margin-top:18px}
+  .warn h3{font-size:1.05rem;color:var(--bad);margin-bottom:.35em}
+  .warn p{margin:.2em 0;color:var(--txt)}
+  table{width:100%;border-collapse:collapse;font-size:.95rem}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-family:Sora;font-size:.85rem;color:var(--mut);font-weight:600}
+  .tbl{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--card)}
+  footer{padding:46px 0;text-align:center;color:var(--mut);font-size:.9rem}
+  .pill{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:.3em .8em;font-size:.78rem;color:var(--mut);margin:4px}
+</style>
+</head>
+<body>
+<nav><div class="wrap">
+  <a class="brand" href="#top"><span class="emoji">🗂️</span> painel-agentes</a>
+  <span class="sep">|</span>
+  <span class="clubpro">
+    <a class="inema" href="https://inema.club" target="_blank" rel="noopener">INEMA.CLUB</a>
+    <span class="sep">-</span>
+    <a class="pro" href="https://inema.pro" target="_blank" rel="noopener">PRO</a>
+  </span>
+  <div class="links">
+    <a class="sec" href="#oque">What it is</a>
+    <a class="sec" href="#telas">Screens</a>
+    <a class="sec" href="#guia">User guide</a>
+    <a class="sec" href="#seguranca">Security</a>
+    <span class="lang"><a href="../">PT</a><a class="on" href="./">EN</a><a href="../es/">ES</a></span>
+    <button class="tgl" id="themeToggle" aria-label="Toggle theme" title="Toggle theme">🌙</button>
+    <a class="btn" href="https://github.com/inematds/painel-agentes" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</div></nav>
+
+<header class="hero" id="top">
+  <div class="glow"></div>
+  <div class="wrap">
+    <div>
+      <span class="chip">Agent dashboard · open source</span>
+      <h1>Your agents <span class="amb">organised</span> on one screen</h1>
+      <p class="lead">Claude Code terminals, bots, queues and credits in a dashboard you can arrange your way — and use to talk to them.</p>
+      <div class="cta">
+        <a class="btn" href="#guia">Start the guide</a>
+        <a class="btn ghost" href="https://github.com/inematds/painel-agentes" target="_blank" rel="noopener">View on GitHub</a>
+      </div>
+    </div>
+    <figure><img src="../assets/banner-en.jpg" alt="Banner: Agent dashboard — see and organise your agents on one screen"></figure>
+  </div>
+</header>
+
+<section id="resumo" class="resumo"><div class="wrap">
+  <span class="chip">In short</span>
+  <p>painel-agentes is a page that runs on your computer and shows everything your AI agents are doing on one screen: open Claude Code sessions (and whether you or a bot opened them), bots, publishing queues, subscription limits and whether your sites are online. It is for anyone who leaves several agents working and loses track of where each one is. You can move the panels around as you like and, if you want, talk to a bot or terminal right there. You need Node 20+ and Linux. To just take a look, demo mode does not read any of your data.</p>
+</div></section>
+
+<section id="oque"><div class="wrap">
+  <span class="chip">What it is</span>
+  <h2>One screen for the agents working for you</h2>
+  <p class="sub">If you use agents, you can end up with five terminals open, two bots running overnight and a queue no one has checked. The dashboard brings everything together and shows you what is waiting for you.</p>
+  <figure style="margin:0 0 26px;border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:0 30px 80px -30px #000"><img src="../assets/banner-grade-en.jpg" alt="Banner: terminals, bots, queues, credits, organise and chat" loading="lazy" style="width:100%;display:block"></figure>
+  <div class="grid g3">
+    <div class="card"><h3>👀 See everything at a glance</h3><p>Nine panels: what is waiting for you, machine, bots, production, publishing, credits, sites, vacancies and terminals. Each one tells you in a sentence whether everything is OK.</p></div>
+    <div class="card"><h3>🧩 Organise it your way</h3><p>The <b>Organizar (Arrange)</b> button moves panels around (by tapping or dragging). Three ways to view — Lista (List), Ícones (Icons) and Imagens (Images) — plus a Jarvis version with voice.</p></div>
+    <div class="card"><h3>💬 Talk to them</h3><p>Open a session and read the conversation, view the screen live and, if you enable it, type in it. The <b>Conversar (Chat)</b> drawer lets you talk to one of your bots or to a terminal.</p></div>
+  </div>
+</div></section>
+
+<section id="telas"><div class="wrap">
+  <span class="chip">Screens</span>
+  <h2>What it looks like in practice</h2>
+  <p class="sub">All the images below are from <b>demo mode</b>: made-up data, no one’s real data. This is exactly what you see when you run <code>npm run demo</code>. The dashboard interface and images are in Portuguese; button names appear here as they do on screen.</p>
+  <div class="shots">
+    <figure class="wide"><a href="../assets/print-lista.jpg" target="_blank" rel="noopener"><img src="../assets/print-lista.jpg" alt="Classic dashboard in Lista (List) mode with all nine panels" loading="lazy"></a><figcaption><b>Classic dashboard — Lista (List)</b>At the top is the alert bar (errors in red, warnings with !). The panels are below. In <i>Terminais (Terminals)</i>, 👤 means a session you opened and 🤖 means one opened by a bot.</figcaption></figure>
+    <figure><a href="../assets/print-imagens.jpg" target="_blank" rel="noopener"><img src="../assets/print-imagens.jpg" alt="Dashboard in Imagens (Images) mode" loading="lazy"></a><figcaption><b>Imagens (Images) mode</b>Production, publishing and terminals become image cards. Good for a TV in the corner of a room.</figcaption></figure>
+    <figure><a href="../assets/print-publicacao.jpg" target="_blank" rel="noopener"><img src="../assets/print-publicacao.jpg" alt="Publicação (Publishing) details with queues shown item by item" loading="lazy"></a><figcaption><b>Publicação (Publishing): queues item by item</b>Each item has just one status, whatever the format of your queue.</figcaption></figure>
+    <figure><a href="../assets/print-sessao-dados.jpg" target="_blank" rel="noopener"><img src="../assets/print-sessao-dados.jpg" alt="Claude Code session open on the Dados (Data) tab" loading="lazy"></a><figcaption><b>Session — Dados (Data) tab</b>Who opened it, how it started, model, how much of the context it has used, equivalent cost and the last request.</figcaption></figure>
+    <figure><a href="../assets/print-sessao-conteudo.jpg" target="_blank" rel="noopener"><img src="../assets/print-sessao-conteudo.jpg" alt="Session on the Conteúdo (Content) tab showing the conversation" loading="lazy"></a><figcaption><b>Session — Conteúdo (Content) tab</b>The conversation, read-only, refreshed every 5 seconds. Any keys and passwords that appear are masked.</figcaption></figure>
+    <figure><a href="../assets/print-sessao-terminal.jpg" target="_blank" rel="noopener"><img src="../assets/print-sessao-terminal.jpg" alt="Session on the Terminal tab with the live screen" loading="lazy"></a><figcaption><b>Session — Terminal tab</b>The live screen. You can type in it (Assumir (Take control)) only with <code>PAINEL_ASSUMIR=1</code> and in sessions opened in the dashboard’s tmux.</figcaption></figure>
+    <figure><a href="../assets/print-organizar.jpg" target="_blank" rel="noopener"><img src="../assets/print-organizar.jpg" alt="Organizar (Arrange) mode enabled, with dashed panels" loading="lazy"></a><figcaption><b>Organizar (Arrange)</b>The panels have dashed borders: tap one, then tap where you want it to go, or drag it. Click <b>Pronto (Done)</b>. The layout is saved on this device.</figcaption></figure>
+    <figure><a href="../assets/print-conversar.jpg" target="_blank" rel="noopener"><img src="../assets/print-conversar.jpg" alt="Conversar (Chat) drawer open beside the dashboard" loading="lazy"></a><figcaption><b>Conversar (Chat) drawer</b>Choose a bot or terminal and type. You have Esc, Ctrl+C, arrow and Enter buttons, plus <b>+ Novo terminal (+ New terminal)</b>.</figcaption></figure>
+    <figure class="wide"><a href="../assets/print-jarvis.jpg" target="_blank" rel="noopener"><img src="../assets/print-jarvis.jpg" alt="Jarvis version of the dashboard, in HUD style" loading="lazy"></a><figcaption><b>Versão Jarvis (Jarvis version) (<code>/jarvis</code>)</b>The same data in a HUD style (a dashboard like one from a science fiction film): animated core, one sentence per system, "Bom dia" (Good morning) spoken aloud and keyboard shortcuts (1 Bom dia · 2 Status · 3 What’s waiting · 4 Focus mode · 5 Change view).</figcaption></figure>
+  </div>
+  <div class="phone">
+    <figure><img src="../assets/print-celular.jpg" alt="Dashboard at mobile phone width" loading="lazy"></figure>
+    <div>
+      <h3 style="font-size:1.15rem;margin-bottom:.4em">Works on your phone too</h3>
+      <p class="mut">The panels stack and the buttons wrap onto new lines. To access it away from home, use a local network or VPN (a private network between your devices), with a password (see <a href="#seguranca">Security</a>).</p>
+      <p class="mut" style="margin-top:1em">Queue statuses, the same in every view:</p>
+      <div class="estados"><span>! na fila (queued)</span><span>✓ publicando (publishing)</span><span>✓ feito (done)</span><span>× erro (error)</span><span>retirado (removed)</span></div>
+    </div>
+  </div>
+</div></section>
+
+<section id="fluxo"><div class="wrap">
+  <span class="chip">How it works</span>
+  <h2>It only reads what is already on your machine</h2>
+  <p class="sub">The dashboard does not call an AI model or API. It reads files your agents and Claude Code already save and brings everything together. Anything you have not configured appears as "not configured" — never as an error.</p>
+  <div class="flow">
+    <span>Your agents work</span><span class="arr">→</span>
+    <span>save sessions, queues and runs</span><span class="arr">→</span>
+    <span>the dashboard reads every 15 seconds</span><span class="arr">→</span>
+    <span>rules flag what needs attention</span><span class="arr">→</span>
+    <span>you check, arrange and act</span>
+  </div>
+  <div class="grid g3" style="margin-top:26px">
+    <div class="card"><h3>Where the data comes from</h3><ul><li>Sessions: <code>~/.claude/sessions</code> and <code>~/.claude/projects</code></li><li>Machine: <code>/proc</code>, disk, <code>journalctl</code></li><li>Bots: <code>systemctl --user</code> and SQLite databases (data stored in a file), read-only</li></ul></div>
+    <div class="card"><h3>What you set in the config</h3><ul><li>Queue files (JSON or TXT)</li><li>Send and run history (JSONL: a log file with one event per line)</li><li>Sites to check, vacancies and deadline reminders</li></ul></div>
+    <div class="card"><h3>Two views, same data</h3><ul><li><code>/painel</code>: classic, with Lista (List), Ícones (Icons) and Imagens (Images)</li><li><code>/jarvis</code>: HUD with voice and shortcuts</li><li>When voice is on, it speaks only new alerts</li></ul></div>
+  </div>
+</div></section>
+
+<section id="pre"><div class="wrap">
+  <span class="chip">Requirements</span>
+  <h2>What you need</h2>
+  <p class="sub">A computer or VPS running Linux (machine data comes from <code>/proc</code>) and Node installed.</p>
+  <div class="grid g3">
+    <div class="card"><h3>Node 20 or later</h3><p style="margin-bottom:.8em">Tested on Node 22.</p><pre><span class="k">node</span> -v   <span class="c"># v20 or maior</span></pre></div>
+    <div class="card"><h3>Git</h3><p style="margin-bottom:.8em">To download the project.</p><pre><span class="k">git</span> --version</pre></div>
+    <div class="card"><h3>tmux (optional)</h3><p style="margin-bottom:.8em">Only if you want to see the live screen, take control or open a new terminal.</p><pre><span class="k">tmux</span> -V</pre></div>
+  </div>
+</div></section>
+
+<section id="guia"><div class="wrap">
+  <span class="chip">User guide · step by step</span>
+  <h2>From scratch to a running dashboard</h2>
+  <p class="sub">Start with demo mode to get to know the screen. Then point it to your files.</p>
+
+  <div class="step"><div class="b">1</div><div>
+    <h3>Download and install</h3>
+    <p>Clone the repository, install the dependencies and build it.</p>
+<pre><span class="k">git clone</span> <span class="s">https://github.com/inematds/painel-agentes</span>
+<span class="k">cd</span> painel-agentes
+<span class="k">npm ci</span> &amp;&amp; <span class="k">npm run build</span></pre>
+    <p>If you see a <code>better-sqlite3</code> build error, you can carry on: it is optional. The dashboard works the same without it; only the Bots panel stops reading databases and shows services only.</p>
+  </div></div>
+
+  <div class="step"><div class="b">2</div><div>
+    <h3>Take a look in demo mode</h3>
+    <p>Made-up data in all nine panels, no login and no access to your data. Open <code>http://127.0.0.1:3143/painel</code> and then <code>/jarvis</code>.</p>
+<pre><span class="k">npm run demo</span>   <span class="c"># same as PAINEL_DEMO=1 node dist/index.js</span></pre>
+    <p>Try the buttons: Lista (List), Ícones (Icons), Imagens (Images), <b>Organizar (Arrange)</b> (move two panels around), <b>Conversar (Chat)</b> and click a session in <i>Terminais (Terminals)</i>. Stop with <code>Ctrl+C</code>.</p>
+  </div></div>
+
+  <div class="step"><div class="b">3</div><div>
+    <h3>Create your config</h3>
+    <p>Copy the example and delete what you do not use. Every key is optional: without a key, the panel shows "not configured".</p>
+<pre><span class="k">cp</span> painel.config.exemplo.json painel.config.json
+<span class="k">nano</span> painel.config.json   <span class="c"># point to the paths for your queues, bots and sites</span></pre>
+    <p>The example includes made-up bots, queues and sites (<code>bot-tarefas</code>, <code>exemplo.com</code>): delete those entries or replace them with your own, or the panels will show "no data" or false alerts. The Credits panel only shows Claude limits if your statusline (the Claude Code status line) writes the file specified in <code>creditos.limites_claude</code>.</p>
+    <p>Claude Code sessions appear without any setup: the dashboard already looks in <code>~/.claude</code>. The full list of keys is in the <a href="https://github.com/inematds/painel-agentes/blob/main/README.en.md" target="_blank" rel="noopener">README</a>.</p>
+  </div></div>
+
+  <div class="step"><div class="b">4</div><div>
+    <h3>Set a password</h3>
+    <p>Only a password summary (hash) is saved. With <code>--gerar</code>, the dashboard creates a strong password and shows it once.</p>
+<pre><span class="k">npm run senha</span>              <span class="c"># you type the password</span>
+<span class="k">npm run senha</span> -- --gerar    <span class="c"># or it generates one for you</span></pre>
+  </div></div>
+
+  <div class="step"><div class="b">5</div><div>
+    <h3>Start the dashboard</h3>
+    <p>Open <code>http://127.0.0.1:3143/painel</code> — only on this computer.</p>
+<pre><span class="k">npm start</span></pre>
+    <p>To keep it running, create a user systemd service:</p>
+<pre><span class="c"># ~/.config/systemd/user/painel-agentes.service</span>
+[Service]
+WorkingDirectory=%h/painel-agentes
+ExecStart=/usr/bin/node dist/index.js
+Restart=on-failure
+[Install]
+WantedBy=default.target</pre>
+<pre><span class="k">systemctl --user daemon-reload</span>
+<span class="k">systemctl --user enable --now</span> painel-agentes
+<span class="k">systemctl --user status</span> painel-agentes   <span class="c"># is it running?</span>
+<span class="k">journalctl --user -u</span> painel-agentes -n 30   <span class="c"># if it did not start, the error appears here</span>
+<span class="k">loginctl enable-linger</span>   <span class="c"># on a VPS: it keeps running after you log out</span></pre>
+    <p>Adjust the two service lines for your setup: <code>WorkingDirectory</code> is the folder where you cloned the project (e.g. <code>%h/projetos/painel-agentes</code>) and <code>ExecStart</code> uses the path shown by <code>which node</code> (with nvm, it differs from <code>/usr/bin/node</code>).</p>
+  </div></div>
+
+  <div class="step"><div class="b">6</div><div>
+    <h3>Arrange it your way</h3>
+    <p>Click <b>Organizar (Arrange)</b>, tap a panel and then where you want it to go (or drag it), then click <b>Pronto (Done)</b>. The layout is saved in the browser on that device; <b>Restaurar padrão (Restore default)</b> returns it to the original. Click any panel to see all its details.</p>
+  </div></div>
+
+  <div class="step"><div class="b">7</div><div>
+    <h3>(Optional) Take control and chat</h3>
+    <p>These are off by default. Enable them only on a trusted network — read <a href="#seguranca">Security</a> first.</p>
+    <p>They use two different keys. <code>PAINEL_ASSUMIR=1</code> enables typing in terminals (the <b>Terminal</b> tab, a terminal in the <b>Conversar (Chat)</b> drawer and <b>+ Novo terminal (+ New terminal)</b>). <code>PAINEL_CHAT=1</code> enables chat with your bot only, and only if <code>chat.bot.url</code> is set in the config. To enable both, put them on the same line:</p>
+<pre><span class="k">PAINEL_ASSUMIR=1 PAINEL_CHAT=1 npm start</span></pre>
+    <p>The dashboard can only view and type in sessions opened in the <b>dashboard’s tmux</b>: a separate tmux named <code>painel</code>. A Claude session opened outside it appears in the list, but you cannot take control of it. To open an agent inside it:</p>
+<pre><span class="k">tmux</span> -L painel new -s meu-projeto claude</pre>
+    <p><b>+ Novo terminal (+ New terminal)</b> does this for you, always inside the folder set in <code>novo_terminal.raiz</code>.</p>
+  </div></div>
+</div></section>
+
+<section id="seguranca"><div class="wrap">
+  <span class="chip">Security</span>
+  <h2>Locked by default</h2>
+  <p class="sub">The dashboard shows a lot about your machine. That is why it starts locked, and you open only what you need.</p>
+  <div class="grid g2">
+    <div class="card"><h3>🔒 Only on this computer</h3><p>It runs on <code>127.0.0.1</code>. To make it available on your network (<code>"bind": "0.0.0.0"</code>), a password is required: without one, it refuses and stays on this computer.</p></div>
+    <div class="card"><h3>🔑 Password login</h3><p>Your login is stored securely in the browser, a device is remembered for 365 days, 5 consecutive errors lock you out for 15 minutes, and there is a "Sair de todos os aparelhos (Log out of all devices)" button.</p></div>
+    <div class="card"><h3>👁️ Read-only</h3><p>It does not call a model or API; it opens databases only to read them; keys, tokens and passwords in conversations and terminals are masked.</p></div>
+    <div class="card"><h3>🧪 Isolated demo</h3><p>In demo mode, it does not read files, run commands or access the network. It only responds on this computer and refuses any write action.</p></div>
+  </div>
+  <div class="warn">
+    <h3>⚠️ Risk of taking control, opening a new terminal and chatting</h3>
+    <p>These three actions <b>type into the agent</b>. If Claude there runs without asking for permission, anyone who gets into the dashboard controls your machine. That is why they are off by default. If you enable them, use only on a local network or VPN, never exposed directly to the internet. Each message is recorded in a log (only the start of the text, masked); the log for taking control is <code>assumir.log</code>, in the dashboard’s data folder.</p>
+  </div>
+</div></section>
+
+<section id="versoes"><div class="wrap">
+  <span class="chip">Versions</span>
+  <h2>Full or simple?</h2>
+  <p class="sub">There is a simple version, in Python and in a single file, for anyone who just wants to look without installing Node.</p>
+  <div class="tbl"><table>
+    <tr><th></th><th>painel-agentes (this one)</th><th>jarvis-painel (simple version)</th></tr>
+    <tr><td>Needs</td><td>Node 20+ and Linux</td><td>Python 3 and a browser</td></tr>
+    <tr><td>What it shows</td><td>9 panels: Claude Code sessions, bots, production, item-by-item queues, credits, sites, vacancies, machine and what is waiting for you</td><td>timers, queues, logs and your pending tasks, in a HUD style with voice</td></tr>
+    <tr><td>Arrange, Chat, Take control</td><td>yes (Chat and Take control are off by default)</td><td>no: the buttons only mark things on screen</td></tr>
+    <tr><td>Guide</td><td>this page</td><td><a href="https://inematds.github.io/jarvis-painel/guia/" target="_blank" rel="noopener">jarvis-painel/guia</a></td></tr>
+  </table></div>
+</div></section>
+
+<footer>
+  <div class="wrap">
+    <span class="pill">Node 22</span><span class="pill">TypeScript</span><span class="pill">no framework</span><span class="pill">MIT</span>
+    <p style="margin-top:18px">painel-agentes · your agents on one screen ·
+      <a href="https://github.com/inematds/painel-agentes">github.com/inematds/painel-agentes</a> ·
+      <a href="https://inema.club">INEMA.CLUB</a></p>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var KEY='painel-agentes-theme';
+    var b=document.body, t=document.getElementById('themeToggle');
+    try{ if(localStorage.getItem(KEY)==='light'){ b.classList.add('light'); t.textContent='☀️'; } }catch(e){}
+    t.addEventListener('click',function(){
+      var light=b.classList.toggle('light');
+      t.textContent=light?'☀️':'🌙';
+      try{ localStorage.setItem(KEY, light?'light':'dark'); }catch(e){}
+    });
+  })();
+</script>
+</body>
+</html>

@@ -1,5 +1,21 @@
 # painel-agentes
 
+[![painel-agentes](guia/assets/banner.jpg)](https://inematds.github.io/painel-agentes/guia/)
+
+**🇧🇷 [Português](README.md) · 🇺🇸 [English](README.en.md) · 🇪🇸 [Español](README.es.md)**
+
+## O que é
+
+O painel-agentes é uma página que roda no seu computador e mostra, numa tela só, tudo o que seus agentes de IA estão fazendo: as sessões do Claude Code abertas (e se foi você ou um robô que abriu), os bots, as filas de publicação, os limites da assinatura e se seus sites estão no ar. Serve para quem deixa vários agentes trabalhando e perde a conta de onde está cada um. Você troca os quadros de lugar como preferir e, se quiser, conversa com um bot ou terminal ali mesmo. Precisa de Node 20+ e Linux; para só conhecer, o modo demonstração não lê nada seu.
+
+## 📖 Guia de uso
+
+Guia completo (landing + passo a passo, com as telas): **https://inematds.github.io/painel-agentes/guia/**
+
+Versão simples em Python (um arquivo): [jarvis-painel](https://inematds.github.io/jarvis-painel/guia/).
+
+## Em detalhe
+
 Painel de monitoramento para quem deixa **agentes de IA trabalhando numa máquina**
 (Claude Code, Codex, bots, timers do systemd). Numa tela só: a saúde da máquina, os
 bots, as rodadas automáticas, as filas de publicação, os limites da assinatura, os
@@ -8,9 +24,6 @@ com quem abriu cada uma (👤 você ou 🤖 um agente).
 
 Node 22 + TypeScript, sem framework, sem build no cliente, sem banco próprio. Só lê o
 que já está na máquina. Inspirado no painel do INEMA.
-
-> Guia completo: https://inematds.github.io/painel-agentes/guia/
-> Versão simples em Python (um arquivo): [jarvis-painel](https://github.com/inematds/jarvis-painel).
 
 ## Para quem é
 
